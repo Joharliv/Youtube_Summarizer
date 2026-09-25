@@ -1,5 +1,7 @@
 # 🎥 Video Digest — AI YouTube Summarizer
 
+<div align="center">
+
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge\&logo=python\&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge\&logo=flask\&logoColor=white)](https://flask.palletsprojects.com/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge\&logo=javascript\&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -9,6 +11,7 @@
 [![Groq](https://img.shields.io/badge/Groq-F55036?style=for-the-badge)](https://groq.com/)
 
 > **Turn long YouTube videos into concise AI-powered summaries and ask questions about the video.**
+</div>
 
 ## 🚀 Live Demo
 
