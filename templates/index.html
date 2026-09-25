@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Video Digest — AI YouTube Summarizer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/style.css">
+</head>
+
+<body>
+
+  <div class="background">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="orb orb-three"></div>
+  </div>
+
+  <header class="hero">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      AI-POWERED VIDEO SUMMARIZER
+    </div>
+
+    <h1>
+      Turn long videos into
+      <span>smart summaries.</span>
+    </h1>
+
+    <p class="subtitle">
+      Paste a YouTube video and let AI extract the important ideas,
+      key points, and answers to your questions.
+    </p>
+
+    <div class="input-card">
+
+      <div class="url-wrapper">
+        <span class="url-icon">▶</span>
+
+        <input
+          id="url"
+          type="url"
+          placeholder="Paste a YouTube URL..."
+          aria-label="YouTube link"
+        >
+      </div>
+
+<select id="lang" class="language-input" aria-label="Summary language">
+  <option value="English">English</option>
+  <option value="Hindi">हिन्दी</option>
+  <option value="Punjabi">ਪੰਜਾਬੀ</option>
+  <option value="Spanish">Español</option>
+  <option value="French">Français</option>
+  <option value="German">Deutsch</option>
+  <option value="Arabic">العربية</option>
+  <option value="Japanese">日本語</option>
+</select>
+
+      <button id="go" class="summarize-btn">
+        <span>Summarize</span>
+        <span class="arrow">→</span>
+      </button>
+
+    </div>
+
+    <p id="status" role="status"></p>
+
+    <div class="features">
+      <span>✓ AI Summary</span>
+      <span>✓ Key Points</span>
+      <span>✓ Ask Questions</span>
+      <span>✓ Multiple Languages</span>
+    </div>
+
+  </header>
+
+
+  <main id="result" hidden>
+
+    <section class="left-column">
+
+      <div class="video-card">
+
+        <div class="card-label">
+          <span class="live-dot"></span>
+          VIDEO
+        </div>
+
+        <div class="video">
+          <iframe
+            id="player"
+            allowfullscreen
+            title="YouTube Video"
+          ></iframe>
+        </div>
+
+      </div>
+
+
+      <article class="summary-card">
+
+        <div class="section-heading">
+
+          <div>
+            <span class="eyebrow">AI GENERATED</span>
+            <h2>Video Summary</h2>
+          </div>
+
+          <div class="sparkle">✦</div>
+
+        </div>
+
+        <div id="summary"></div>
+
+      </article>
+
+    </section>
+
+
+    <aside class="chat-card">
+
+      <div class="chat-header">
+
+        <div class="ai-avatar">
+          ✦
+        </div>
+
+        <div>
+          <span class="eyebrow">VIDEO AI</span>
+          <h2>Ask anything</h2>
+        </div>
+
+        <span class="online-dot"></span>
+
+      </div>
+
+      <div class="chat-description">
+        Ask questions about the video and get answers based only on its content.
+      </div>
+
+      <div id="log" class="chat-log">
+
+        <div class="welcome-message">
+
+          <div class="welcome-icon">✦</div>
+
+          <h3>Ask me about this video</h3>
+
+        </div>
+
+      </div>
+
+
+      <div class="ask">
+
+        <input
+          id="q"
+          placeholder="Ask something about the video..."
+          aria-label="Your question"
+        >
+
+        <button id="send" aria-label="Send question">
+          ➤
+        </button>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+
+  <footer>
+    
+    <span>Video Digest</span>
+    <span>•</span>
+    <span>Powered by AI</span>
+  </footer>
+
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
+
