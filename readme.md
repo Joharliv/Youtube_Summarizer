@@ -1,6 +1,6 @@
-#  Video Digest - AI YouTube Summarizer
-
 <div align="center">
+
+#  Video Digest - AI YouTube Summarizer
 
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge\&logo=python\&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge\&logo=flask\&logoColor=white)](https://flask.palletsprojects.com/)
@@ -73,7 +73,7 @@ http://127.0.0.1:5000
 ## 👩‍💻 Developer
 
 **Liv Johar**
-B.E. Computer Science Engineering — Artificial Intelligence & Machine Learning
+B.E. Computer Science Engineering - Artificial Intelligence & Machine Learning
 Chitkara University, Punjab
 
 ---
