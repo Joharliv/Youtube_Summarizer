@@ -1,4 +1,4 @@
-# 🎥 Video Digest — AI YouTube Summarizer
+#  Video Digest - AI YouTube Summarizer
 
 <div align="center">
 
@@ -70,8 +70,14 @@ Then open:
 http://127.0.0.1:5000
 ```
 
-## 👩‍💻 Author
+## 👩‍💻 Developer
 
 **Liv Johar**
+B.E. Computer Science Engineering — Artificial Intelligence & Machine Learning
+Chitkara University, Punjab
 
-[GitHub](https://github.com/Joharliv)
+---
+
+## 📌 Status
+
+**Completed**
