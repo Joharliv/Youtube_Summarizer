@@ -4,3 +4,4 @@ groq
 yt-dlp
 youtube-transcript-api>=1.0.0
 python-dotenv>=1.0
+gunicorn
