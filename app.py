@@ -23,6 +23,13 @@ MAX_CHARS = 120_000     # cap very long transcripts
 MAX_MINUTES = 90        # limit for videos WITHOUT captions (protects the free limits)
 transcripts = {}        # in-memory cache: video_id -> transcript text
 
+# Path to a YouTube cookies.txt file (Netscape format), used to authenticate
+# yt-dlp's requests so YouTube doesn't treat them as bot traffic. On Render,
+# upload the file as a "Secret File" named youtube_cookies.txt; it will be
+# mounted at /etc/secrets/youtube_cookies.txt automatically. Locally this
+# path just won't exist, and the code below skips it, which is fine.
+COOKIE_FILE = os.getenv("YOUTUBE_COOKIE_FILE", "/etc/secrets/youtube_cookies.txt")
+
 
 def extract_video_id(url):
     m = re.search(r"(?:v=|youtu\.be/|shorts/|embed/|live/)([A-Za-z0-9_-]{11})", url or "")
@@ -45,11 +52,32 @@ def whisper_transcript(url):
             "format": "bestaudio/best",
             "outtmpl": f"{tmp}/audio.%(ext)s",
             "quiet": True,
+            "no_warnings": True,
+
+            "extractor_args": {
+                "youtube": {
+                    "player_client": ["android", "web_safari"]
+                }
+            },
+
             "postprocessors": [
-                {"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "32"}
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "32"
+                }
             ],
-            "postprocessor_args": ["-ac", "1", "-ar", "16000"],  # mono, small files
+
+            "postprocessor_args": [
+                "-ac", "1",
+                "-ar", "16000"
+            ],
         }
+
+        # Only attach cookies if the file actually exists (e.g. on Render).
+        if os.path.exists(COOKIE_FILE):
+            opts["cookiefile"] = COOKIE_FILE
+
         with yt_dlp.YoutubeDL(opts) as ydl:
             info = ydl.extract_info(url, download=False)
             if (info.get("duration") or 0) > MAX_MINUTES * 60:
@@ -89,6 +117,14 @@ def transcript_or_error(video_id):
         return None, str(e)
     except FileNotFoundError:
         return None, "ffmpeg is not installed, so videos without captions can't be processed."
+    except yt_dlp.utils.DownloadError:
+        # Friendlier message for the "Sign in to confirm you're not a bot" case
+        # and other yt-dlp download failures, instead of the raw traceback text.
+        return None, (
+            "Couldn't download the audio for this video right now (YouTube is blocking "
+            "the request). This can happen even when the video has no captions available. "
+            "Please try a different video, or try again later."
+        )
     except Exception as e:
         return None, f"Couldn't get captions or audio for this video: {e}"
 
