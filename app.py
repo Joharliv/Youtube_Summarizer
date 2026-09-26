@@ -56,9 +56,9 @@ def whisper_transcript(url):
             "no_warnings": True,
 
             "extractor_args": {
-                "youtube": {
-                    "player_client": ["android", "web_safari"]
-                }
+                 "youtube": {
+                 "player_client": ["web_safari"]
+               }
             },
 
             "postprocessors": [
@@ -122,20 +122,25 @@ def get_transcript(video_id):
 def transcript_or_error(video_id):
     try:
         return get_transcript(video_id), None
+
     except ValueError as e:
         return None, str(e)
+
     except FileNotFoundError:
         return None, "ffmpeg is not installed, so videos without captions can't be processed."
+
     except yt_dlp.utils.DownloadError as e:
-        # Log the real error server-side so we can diagnose it (check Render logs),
-        # while still showing users a friendlier message than the raw traceback.
-        print(f"[yt-dlp DownloadError] {e}")
+        # Print the complete yt-dlp error in Render logs for debugging.
+        print(f"[yt-dlp DownloadError] {repr(e)}", flush=True)
+
         return None, (
-            "Couldn't download the audio for this video right now (YouTube is blocking "
-            "the request). This can happen even when the video has no captions available. "
-            "Please try a different video, or try again later."
+            "Couldn't download the audio for this video right now. "
+            "YouTube may be blocking the request. "
+            "Please try a different video or try again later."
         )
+
     except Exception as e:
+        print(f"[Unexpected Error] {repr(e)}", flush=True)
         return None, f"Couldn't get captions or audio for this video: {e}"
 
 
