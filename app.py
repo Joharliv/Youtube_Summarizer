@@ -141,12 +141,7 @@ def transcript_or_error(video_id):
     except yt_dlp.utils.DownloadError as e:
         # Print the complete yt-dlp error in Render logs for debugging.
         print(f"[yt-dlp DownloadError] {repr(e)}", flush=True)
-
-        return None, (
-            "Couldn't download the audio for this video right now. "
-            "YouTube may be blocking the request. "
-            "Please try a different video or try again later."
-        )
+        return None, f"YT-DLP ERROR: {e}"
 
     except Exception as e:
         print(f"[Unexpected Error] {repr(e)}", flush=True)
