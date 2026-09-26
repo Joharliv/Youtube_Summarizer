@@ -47,7 +47,9 @@ def captions_transcript(video_id):
 
 
 def whisper_transcript(url):
-    """No captions: download the audio, cut it into 10-minute pieces, transcribe each."""
+    """No captions: download the audio, cut it into 10-minute pieces, transcribe each.
+    NOTE: unreliable on Render due to YouTube's bot detection on datacenter IPs.
+    Only used locally when ALLOW_AUDIO_FALLBACK=1 is set (see get_transcript)."""
     with tempfile.TemporaryDirectory() as tmp:
         opts = {
             "format": "bestaudio/best",
@@ -89,7 +91,7 @@ def whisper_transcript(url):
 
         print(f"[yt-dlp] Starting download for: {url}", flush=True)
 
-        with yt_dlp.YoutubeDL(opts) as ydl: 
+        with yt_dlp.YoutubeDL(opts) as ydl:
              info = ydl.extract_info(url, download=False)
 
              print(f"[yt-dlp] Video title: {info.get('title')}", flush=True)
@@ -119,10 +121,18 @@ def whisper_transcript(url):
 def get_transcript(video_id):
     if video_id in transcripts:
         return transcripts[video_id]
-    try:
+
+    # In production (Render), YouTube's bot detection makes the audio-download
+    # fallback unreliable, so by default we only use captions and let it raise
+    # if none exist. Set ALLOW_AUDIO_FALLBACK=1 locally to test the whisper path.
+    if os.getenv("ALLOW_AUDIO_FALLBACK") == "1":
+        try:
+            text = captions_transcript(video_id)
+        except Exception:
+            text = whisper_transcript(f"https://www.youtube.com/watch?v={video_id}")
+    else:
         text = captions_transcript(video_id)
-    except Exception:
-        text = whisper_transcript(f"https://www.youtube.com/watch?v={video_id}")
+
     text = text[:MAX_CHARS]
     transcripts[video_id] = text
     return text
@@ -141,11 +151,17 @@ def transcript_or_error(video_id):
     except yt_dlp.utils.DownloadError as e:
         # Print the complete yt-dlp error in Render logs for debugging.
         print(f"[yt-dlp DownloadError] {repr(e)}", flush=True)
-        return None, f"YT-DLP ERROR: {e}"
+        return None, (
+            "This video doesn't have captions available, so it can't be summarized "
+            "right now. Please try a video that has captions/subtitles enabled."
+        )
 
     except Exception as e:
         print(f"[Unexpected Error] {repr(e)}", flush=True)
-        return None, f"Couldn't get captions or audio for this video: {e}"
+        return None, (
+            "This video doesn't have captions available, so it can't be summarized "
+            "right now. Please try a video that has captions/subtitles enabled."
+        )
 
 
 def ask_ai(system, messages):
