@@ -1,6 +1,7 @@
 import glob
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 
@@ -74,9 +75,17 @@ def whisper_transcript(url):
             ],
         }
 
-        # Only attach cookies if the file actually exists (e.g. on Render).
+        # Render's Secret Files are mounted read-only, but yt-dlp needs to write
+        # back to the cookie file (YouTube rotates session cookies on use). So
+        # copy it into this request's writable temp dir first, and point yt-dlp
+        # at that copy instead of the read-only original.
         if os.path.exists(COOKIE_FILE):
-            opts["cookiefile"] = COOKIE_FILE
+            writable_cookie_file = f"{tmp}/youtube_cookies.txt"
+            shutil.copyfile(COOKIE_FILE, writable_cookie_file)
+            opts["cookiefile"] = writable_cookie_file
+            print(f"[yt-dlp] Using cookie file (writable copy): {writable_cookie_file}")
+        else:
+            print(f"[yt-dlp] No cookie file found at: {COOKIE_FILE}")
 
         with yt_dlp.YoutubeDL(opts) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -117,9 +126,10 @@ def transcript_or_error(video_id):
         return None, str(e)
     except FileNotFoundError:
         return None, "ffmpeg is not installed, so videos without captions can't be processed."
-    except yt_dlp.utils.DownloadError:
-        # Friendlier message for the "Sign in to confirm you're not a bot" case
-        # and other yt-dlp download failures, instead of the raw traceback text.
+    except yt_dlp.utils.DownloadError as e:
+        # Log the real error server-side so we can diagnose it (check Render logs),
+        # while still showing users a friendlier message than the raw traceback.
+        print(f"[yt-dlp DownloadError] {e}")
         return None, (
             "Couldn't download the audio for this video right now (YouTube is blocking "
             "the request). This can happen even when the video has no captions available. "
