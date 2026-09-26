@@ -87,11 +87,20 @@ def whisper_transcript(url):
         else:
             print(f"[yt-dlp] No cookie file found at: {COOKIE_FILE}")
 
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(url, download=False)
-            if (info.get("duration") or 0) > MAX_MINUTES * 60:
-                raise ValueError(f"Videos without captions can be up to {MAX_MINUTES} minutes long.")
-            ydl.download([url])
+        print(f"[yt-dlp] Starting download for: {url}", flush=True)
+
+        with yt_dlp.YoutubeDL(opts) as ydl: 
+             info = ydl.extract_info(url, download=False)
+
+             print(f"[yt-dlp] Video title: {info.get('title')}", flush=True)
+             print(f"[yt-dlp] Duration: {info.get('duration')}", flush=True)
+
+             if (info.get("duration") or 0) > MAX_MINUTES * 60:
+                raise ValueError(
+                   f"Videos without captions can be up to {MAX_MINUTES} minutes long."
+                )
+
+             ydl.download([url])
         subprocess.run(
             ["ffmpeg", "-y", "-i", f"{tmp}/audio.mp3", "-f", "segment",
              "-segment_time", "600", "-c", "copy", f"{tmp}/part_%03d.mp3"],
