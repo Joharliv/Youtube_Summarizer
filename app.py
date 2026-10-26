@@ -121,6 +121,10 @@ def whisper_transcript(url):
 
 
 def get_transcript(video_id):
+
+    print(f"[DEBUG] get_transcript called for video: {video_id}", flush=True)
+
+
     if video_id in transcripts:
         return transcripts[video_id]
 
