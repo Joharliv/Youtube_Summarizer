@@ -8,6 +8,7 @@ import tempfile
 import yt_dlp
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
+from flask_cors import CORS
 from google import genai
 from google.genai import types
 from groq import Groq
@@ -16,6 +17,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 gemini = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))  # summaries + chat
 groq = Groq(api_key=os.getenv("GROQ_API_KEY"))              # speech-to-text
 # Model names change often; if this one errors, copy a current name from Google AI Studio.
