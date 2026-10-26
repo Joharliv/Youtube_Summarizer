@@ -40,13 +40,24 @@ def extract_video_id(url):
 
 
 def captions_transcript(video_id):
-    available = YouTubeTranscriptApi().list(video_id)
-    try:
-        chosen = available.find_transcript(["en", "hi", "pa"])
-    except Exception:
-        chosen = next(iter(available))  # any language; Gemini handles translation
-    return " ".join(s.text for s in chosen.fetch())
+    print(f"[DEBUG] Fetching captions for video: {video_id}", flush=True)
 
+    try:
+        available = YouTubeTranscriptApi().list(video_id)
+
+        try:
+            chosen = available.find_transcript(["en", "hi", "pa"])
+        except Exception:
+            chosen = next(iter(available))
+
+        return " ".join(s.text for s in chosen.fetch())
+
+    except Exception as e:
+        print(
+            f"[CAPTIONS ERROR] {type(e).__name__}: {e!r}",
+            flush=True
+        )
+        raise
 
 def whisper_transcript(url):
     """No captions: download the audio, cut it into 10-minute pieces, transcribe each.
@@ -158,15 +169,14 @@ def transcript_or_error(video_id):
         # Print the complete yt-dlp error in Render logs for debugging.
         print(f"[yt-dlp DownloadError] {repr(e)}", flush=True)
         return None, (
-            "This video doesn't have captions available, so it can't be summarized "
-            "right now. Please try a video that has captions/subtitles enabled."
+            "This video can't be downloaded, so it can't be summarized right now. "
         )
 
     except Exception as e:
         print(f"[Unexpected Error] {repr(e)}", flush=True)
         return None, (
-            "This video doesn't have captions available, so it can't be summarized "
-            "right now. Please try a video that has captions/subtitles enabled."
+            "This video can't be downloaded, so it can't be summarized right now. "
+            "Please try a different video unexpected error occurred."
         )
 
 
