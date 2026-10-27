@@ -106,6 +106,19 @@ def whisper_transcript(url):
 
         with yt_dlp.YoutubeDL(opts) as ydl:
              info = ydl.extract_info(url, download=False)
+             print(
+               "[yt-dlp] Available formats:",
+              [
+                {
+                   "format_id": f.get("format_id"),
+                   "ext": f.get("ext"),
+                   "acodec": f.get("acodec"),
+                   "vcodec": f.get("vcodec"),
+                }
+                for f in info.get("formats", [])
+              ],
+              flush=True,
+             )
 
              print(f"[yt-dlp] Video title: {info.get('title')}", flush=True)
              print(f"[yt-dlp] Duration: {info.get('duration')}", flush=True)
