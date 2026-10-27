@@ -65,7 +65,7 @@ def whisper_transcript(url):
     Only used locally when ALLOW_AUDIO_FALLBACK=1 is set (see get_transcript)."""
     with tempfile.TemporaryDirectory() as tmp:
         opts = {
-            "format": "bestaudio/best",
+            "format": "best",
             "outtmpl": f"{tmp}/audio.%(ext)s",
             "quiet": True,
             "no_warnings": True,
