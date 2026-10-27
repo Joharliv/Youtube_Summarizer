@@ -105,7 +105,11 @@ def whisper_transcript(url):
         print(f"[yt-dlp] Starting download for: {url}", flush=True)
 
         with yt_dlp.YoutubeDL(opts) as ydl:
-             info = ydl.extract_info(url, download=False)
+             try:
+               info = ydl.extract_info(url, download=False)
+             except Exception as e:
+               print(f"[EXTRACT INFO ERROR] {type(e).__name__}: {e!r}", flush=True)
+               raise
              print(
                "[yt-dlp] Available formats:",
               [
